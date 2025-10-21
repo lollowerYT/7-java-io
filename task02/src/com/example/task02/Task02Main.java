@@ -41,8 +41,4 @@ public class Task02Main {
     }
 }
 
-        
-        output.flush();
-    }
-}
 
