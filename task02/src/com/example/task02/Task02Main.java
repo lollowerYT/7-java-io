@@ -8,32 +8,39 @@ public class Task02Main {
     public static void main(String[] args) throws IOException {
         InputStream input = System.in;
         OutputStream output = System.out;
-        
-        // Константы для символов перевода строки
-        final int CR = 13; // \r
-        final int LF = 10; // \n
-        
-        int currentByte;
-        
-        while ((currentByte = input.read()) != -1) {
-            if (currentByte == CR) {
-                // Проверяем следующий байт
-                int nextByte = input.read();
-                if (nextByte == LF) {
-                    // Если встретили \r\n - записываем только \n
+
+        final int CR = 13; // '\r'
+        final int LF = 10; // '\n'
+
+        int prev = -1;
+        int curr;
+
+        while ((curr = input.read()) != -1) {
+            if (prev == CR) {
+                if (curr == LF) {
+                    // заменяем \r\n -> \n
                     output.write(LF);
+                    prev = -1; // сбрасываем, чтобы не писать \r отдельно
+                    continue;
                 } else {
-                    // Иначе возвращаем прочитанный байт обратно
+                    // одиночный \r — выводим
                     output.write(CR);
-                    if (nextByte != -1) {
-                        input.unread(nextByte);
-                    }
                 }
-            } else {
-                // Для остальных байтов просто записываем их
-                output.write(currentByte);
             }
+            prev = curr;
         }
+
+        // если последний байт был \r без \n — нужно вывести его
+        if (prev == CR) {
+            output.write(CR);
+        } else if (prev != -1) {
+            output.write(prev);
+        }
+
+        output.flush();
+    }
+}
+
         
         output.flush();
     }
